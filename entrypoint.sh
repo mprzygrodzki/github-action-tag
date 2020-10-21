@@ -5,7 +5,7 @@ set -o pipefail
 # config
 default_semvar_bump=${DEFAULT_BUMP:-patch}
 with_v=${WITH_V:-false}
-branch_name=${BRANCH_NAME:-master}
+tag_suffix=${TAG_SUFFIX:-master}
 release_branches=${RELEASE_BRANCHES:-master}
 custom_tag=${CUSTOM_TAG}
 source=${SOURCE:-.}
@@ -19,7 +19,7 @@ cd ${GITHUB_WORKSPACE}/${source}
 echo "*** CONFIGURATION ***"
 echo -e "\tDEFAULT_BUMP: ${default_semvar_bump}"
 echo -e "\tWITH_V: ${with_v}"
-echo -e "\tBRANCH_NAME: ${branch_name}"
+echo -e "\tTAG_SUFFIX: ${tag_suffix}"
 echo -e "\tRELEASE_BRANCHES: ${release_branches}"
 echo -e "\tCUSTOM_TAG: ${custom_tag}"
 echo -e "\tSOURCE: ${source}"
@@ -30,7 +30,7 @@ echo -e "\tPRERELEASE_SUFFIX: ${suffix}"
 
 current_branch=$(git rev-parse --abbrev-ref HEAD)
 
-pre_release="false"
+pre_release="true"
 IFS=',' read -ra branch <<< "$release_branches"
 for b in "${branch[@]}"; do
     echo "Is $b a match for ${current_branch}"
@@ -112,7 +112,7 @@ then
 	# prefix with 'v'
 	if $with_v
 	then
-		new="${branch_name}-$new"
+		new="${tag_suffix}-$new"
 	fi
 fi
 
