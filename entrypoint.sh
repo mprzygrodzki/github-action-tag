@@ -30,6 +30,17 @@ echo -e "\tPRERELEASE_SUFFIX: ${suffix}"
 
 current_branch=$(git rev-parse --abbrev-ref HEAD)
 
+pre_release="false"
+IFS=',' read -ra branch <<< "$release_branches"
+for b in "${branch[@]}"; do
+    echo "Is $b a match for ${current_branch}"
+    if [[ "${current_branch}" =~ $b ]]
+    then
+        pre_release="false"
+    fi
+done
+echo "pre_release = $pre_release"
+
 # fetch tags
 git fetch --tags
 
@@ -82,6 +93,16 @@ case "$log" in
         fi 
         ;;
 esac
+
+if $pre_release
+then
+    # Already a prerelease available, bump it
+    if [[ "$pre_tag" == *"$new"* ]]; then
+        new=$(semver -i prerelease $pre_tag --preid $suffix); part="pre-$part"
+    else
+        new="$new-$suffix.1"; part="pre-$part"
+    fi
+fi
 
 echo $part
 
