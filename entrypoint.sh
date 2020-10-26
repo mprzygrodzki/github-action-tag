@@ -112,7 +112,7 @@ then
 	# prefix with 'v'
 	if $with_v
 	then
-		new="v$new"
+		new="$prefix-$new"
 	fi
 fi
 
